@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InjectLab: LLM ATT&CK Matrix</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 2rem;
+      }
+      .matrix {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .tactic {
+        background: linear-gradient(to right, #ff4d4d, #b30000);
+        color: #fff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        text-align: center;
+      }
+      .techniques {
+        background: #111827;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid #374151;
+      }
+      .technique {
+        display: block;
+        background: #000;
+        color: #fff;
+        margin: 0.25rem 0;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        text-align: center;
+        text-decoration: none;
+        font-family: monospace;
+        font-size: 0.875rem;
+        border: 1px solid #444;
+        transition: background 0.2s ease-in-out;
+      }
+      .technique:hover {
+        background: #4b5563;
+        cursor: pointer;
+      }
+          input[type="text"] {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+      }
+
+      .dark-mode {
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      .dark-mode .tactic {
+        background: #800000;
+      }
+
+      .dark-mode .techniques {
+        background: #2c2c2c;
+      }
+
+      .dark-mode .technique {
+        background: #1f1f1f;
+        color: #e0e0e0;
+      }
+</style>
+  </head>
+  <body>
+    <button onclick="toggleDarkMode()" aria-label="Toggle dark mode">🌙 Toggle Dark Mode</button>
+    <input type="text" id="search" placeholder="Search techniques..." oninput="renderMatrix()" aria-label="Search techniques" />
+    <h1>InjectLab: LLM ATT&CK Matrix</h1>
+    <div id="matrix" class="matrix"></div>
+    <div id="details" class="details"></div>
+    <script>
+  const data = [
+    {
+      name: 'Prompt Injection',
+      techniques: [
+        { id: 'PI-T001' },
+        { id: 'PI-T002' },
+        { id: 'PI-T003' },
+        { id: 'PI-T004' }
+      ]
+    },
+    {
+      name: 'Role/Instruction Override',
+      techniques: [
+        { id: 'RO-T001' },
+        { id: 'RO-T002' },
+        { id: 'RO-T003' }
+      ]
+    },
+    {
+      name: 'Execution Hijack',
+      techniques: [
+        { id: 'EH-T001' },
+        { id: 'EH-T002' },
+        { id: 'EH-T003' }
+      ]
+    },
+    {
+      name: 'Information Disclosure',
+      techniques: [
+        { id: 'ID-T001' },
+        { id: 'ID-T002' },
+        { id: 'ID-T003' }
+      ]
+    },
+    {
+      name: 'Output Manipulation',
+      techniques: [
+        { id: 'OM-T001' },
+        { id: 'OM-T002' },
+        { id: 'OM-T003' }
+      ]
+    },
+    {
+      name: 'Multi-Agent Exploitation',
+      techniques: [
+        { id: 'MA-T001' },
+        { id: 'MA-T002' },
+        { id: 'MA-T003' }
+      ]
+    }
+  ];
+
+  function renderMatrix() {
+    const matrix = document.getElementById('matrix');
+    const search = (document.getElementById('search')?.value || '').toLowerCase();
+    matrix.innerHTML = '';
+
+    data.forEach((tactic) => {
+      const tacticBox = document.createElement('div');
+      tacticBox.className = 'tactic';
+      tacticBox.innerHTML = `<strong>${tactic.name}</strong>`;
+
+      const techniqueList = document.createElement('div');
+      techniqueList.className = 'techniques';
+
+      tactic.techniques.forEach((tech) => {
+        if (tech.id.toLowerCase().includes(search)) {
+          const link = document.createElement('div');
+          link.className = 'technique';
+          link.textContent = tech.id;
+          link.onclick = () => showDetails(tech);
+          techniqueList.appendChild(link);
+        }
+      });
+
+      tacticBox.appendChild(techniqueList);
+      matrix.appendChild(tacticBox);
+    });
+  }
+
+  function showDetails(tech) {
+    const paragraphs = {
+      'PI-T001': `<h2>Direct Prompt Injection (PI-T001)</h2><p>This involves appending or inserting malicious instructions directly into user input. These override the system prompt and influence model behavior.</p><p><strong>Detection:</strong> Monitor for phrases like 'ignore previous instructions' or 'you are now'. Analyze prompt history for abrupt role shifts.</p><p><strong>Mitigation:</strong> Use strict input validation, escape characters, and delimiters. <a href='https://arxiv.org/abs/2302.12173' target='_blank'>Research Link</a></p>`,
+      'PI-T002': `<h2>Indirect Context Injection (PI-T002)</h2><p>Injections embedded in external content (PDFs, HTML) that are parsed by the LLM during summarization or ingestion tasks.</p><p><strong>Detection:</strong> Analyze input sources and encoding. Look for injection artifacts in summaries or outputs.</p><p><strong>Mitigation:</strong> Sanitize and normalize all external inputs. Strip metadata and formatting. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Study Link</a></p>`,
+      'PI-T003': `<h2>Obfuscated Prompt Injection (PI-T003)</h2><p>Obfuscation methods like base64, Unicode homoglyphs, or invisible characters evade filters.</p><p><strong>Detection:</strong> Normalize prompts before processing. Use encoding/entropy checks.</p><p><strong>Mitigation:</strong> Restrict character sets, decode inputs, sanitize whitespace. <a href='https://llm-attacks.org' target='_blank'>LLM Attacks Directory</a></p>`,
+      'PI-T004': `<h2>Prompt Leakage via Summaries (PI-T004)</h2><p>LLMs asked to summarize or reflect may expose parts of their hidden system prompt.</p><p><strong>Detection:</strong> Flag outputs that contain self-reference or instruction leakage.</p><p><strong>Mitigation:</strong> Prevent summaries of system prompts, mask internal logic. <a href='https://arxiv.org/abs/2304.09752' target='_blank'>Leakage Research</a></p>`,
+      'RO-T001': `<h2>Identity Swap (RO-T001)</h2><p>Tricks the LLM into adopting a different persona, such as a system admin or fictional assistant.</p><p><strong>Detection:</strong> Search for prompts like 'you are now' or 'pretend to be'.</p><p><strong>Mitigation:</strong> Role locking and output filtering. <a href='https://arxiv.org/abs/2302.12173' target='_blank'>Identity Research</a></p>`,
+      'RO-T002': `<h2>System Prompt Manipulation (RO-T002)</h2><p>Alters or mimics system instructions through user prompts or indirect phrasing.</p><p><strong>Detection:</strong> Detect phrasings that simulate configuration or developer roles.</p><p><strong>Mitigation:</strong> Separate system/user prompts with secure tokenization. <a href='https://owasp.org/www-project-top-10-for-large-language-model-applications/' target='_blank'>OWASP LLM Top 10</a></p>`,
+      'RO-T003': `<h2>Jailbreak Template Injection (RO-T003)</h2><p>Crafted prompts designed to bypass restrictions using storytelling, hypotheticals, or logic traps.</p><p><strong>Detection:</strong> Match prompt templates and detect unusually verbose user input.</p><p><strong>Mitigation:</strong> Red team datasets and prompt classifiers. <a href='https://jailbreakchat.com/' target='_blank'>JailbreakChat</a></p>`,
+      'EH-T001': `<h2>Plugin Abuse (EH-T001)</h2><p>Abuses LLM plugins/tools to execute unauthorized commands.</p><p><strong>Detection:</strong> Audit tool usage patterns, especially rapid or abnormal ones.</p><p><strong>Mitigation:</strong> Scope plugin permissions and implement throttling. <a href='https://owasp.org/www-project-top-10-for-large-language-model-applications/' target='_blank'>OWASP Reference</a></p>`,
+      'EH-T002': `<h2>Task Loop Injection (EH-T002)</h2><p>Prompts that trap agents or models in infinite or repeated execution cycles.</p><p><strong>Detection:</strong> Count loop frequency and prompt/output similarity.</p><p><strong>Mitigation:</strong> Add task loop counters and timeouts. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Loop Study</a></p>`,
+      'EH-T003': `<h2>Redirected Intent (EH-T003)</h2><p>LLMs are manipulated to fulfill unintended actions by shifting context or framing.</p><p><strong>Detection:</strong> Compare actual output against task intention.</p><p><strong>Mitigation:</strong> Contextual awareness checks and semantic drift analysis. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Intent Redirection</a></p>`,
+      'ID-T001': `<h2>System Prompt Leak (ID-T001)</h2><p>Reveals hidden system-level prompts through reflective prompting or debugging.</p><p><strong>Detection:</strong> Detect meta reasoning and model references.</p><p><strong>Mitigation:</strong> Prevent system reflection and apply output filters. <a href='https://arxiv.org/abs/2304.09752' target='_blank'>Prompt Leak Study</a></p>`,
+      'ID-T002': `<h2>Memory Spill (ID-T002)</h2><p>Content from prior sessions persists across context boundaries.</p><p><strong>Detection:</strong> Session scope analysis and token re-use comparison.</p><p><strong>Mitigation:</strong> Enforce context isolation and memory clearing. <a href='https://www.anthropic.com/index/core-views-on-ai-safety' target='_blank'>Anthropic Safety</a></p>`,
+      'ID-T003': `<h2>Configuration Disclosure (ID-T003)</h2><p>Model reveals internal configs, limits, or version metadata.</p><p><strong>Detection:</strong> Scan output for terms like 'token limit' or 'model type'.</p><p><strong>Mitigation:</strong> Strip technical disclosure terms post-output. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Config Exposure</a></p>`,
+      'OM-T001': `<h2>Emotion Steering (OM-T001)</h2><p>Prompts subtly shift model tone, sentiment, or persuasion direction.</p><p><strong>Detection:</strong> Sentiment analysis and tone profiling tools.</p><p><strong>Mitigation:</strong> Output tone normalization and response constraints. <a href='https://arxiv.org/abs/2306.00612' target='_blank'>Emotion Bias</a></p>`,
+      'OM-T002': `<h2>Censorship Bypass (OM-T002)</h2><p>Fictional framing is used to produce harmful or filtered content.</p><p><strong>Detection:</strong> Spot context-switching language and speculative hypotheticals.</p><p><strong>Mitigation:</strong> Apply safety layer against fictional prompts. <a href='https://openai.com/research/gpt-4-system-card' target='_blank'>System Card</a></p>`,
+      'OM-T003': `<h2>Bias Injection (OM-T003)</h2><p>Pushes LLM to produce biased, political, or controversial opinions.</p><p><strong>Detection:</strong> Cross-reference generation with neutrality classifiers.</p><p><strong>Mitigation:</strong> Tune model alignment and avoid implicit framing. <a href='https://crfm.stanford.edu/2023/03/13/alignment.html' target='_blank'>Stanford Alignment</a></p>`,
+      'MA-T001': `<h2>Cross-Agent Prompt Poisoning (MA-T001)</h2><p>Adversarial input to one model is passed to another without validation.</p><p><strong>Detection:</strong> Analyze agent-to-agent output flow for injection risks.</p><p><strong>Mitigation:</strong> Chain validation layers between agents. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Multi-Agent Study</a></p>`,
+      'MA-T002': `<h2>Response Relay Exploit (MA-T002)</h2><p>Unsafe completions are chained via multi-agent workflows.</p><p><strong>Detection:</strong> Map task chains and evaluate each node's output.</p><p><strong>Mitigation:</strong> Validate task boundaries and responses. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Relay Chain Study</a></p>`,
+      'MA-T003': `<h2>Agent Role Misassignment (MA-T003)</h2><p>Agents act outside their designed roles via prompt confusion.</p><p><strong>Detection:</strong> Role assignment verification and prompt intent logging.</p><p><strong>Mitigation:</strong> Enforce strict agent role scopes. <a href='https://arxiv.org/abs/2307.15043' target='_blank'>Agent Identity Study</a></p>`
+    };
+
+    const container = document.getElementById('details');
+    container.innerHTML =
+      paragraphs[tech.id] || `<h2>${tech.id}</h2><p>No description available.</p>`;
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+
+  window.onload = renderMatrix;
+</script>
+  <footer style="text-align:center;margin-top:2rem;font-size:0.9rem">
+  View the full project on <a href="https://github.com/ahow2004/injectlab" target="_blank">GitHub</a>
+</footer>
+</body>
+</html>
