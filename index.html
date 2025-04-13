@@ -84,6 +84,15 @@
     <h1>InjectLab: LLM ATT&CK Matrix</h1>
     <div id="matrix" class="matrix"></div>
     <div id="details" class="details"></div>
+
+<section id="about" style="margin-top: 3rem; padding: 1rem; background: #fff; border: 1px solid #ccc; border-radius: 0.5rem;">
+  <h2>About InjectLab</h2>
+  <p><strong>InjectLab</strong> is a research-focused initiative developed by Austin Howard, a Network Engineering and Security student at Western Governors University, designed to map and categorize adversarial threats targeting large language models (LLMs). Inspired by the MITRE ATT&CK framework, InjectLab structures emerging LLM-specific vulnerabilities into a tactical matrix that highlights prompt injection techniques, system prompt manipulation, memory exploits, and output manipulation vectors. Each technique is paired with contextual explanations, detection heuristics, and recommended mitigations to serve both red teamers and defenders exploring the evolving LLM threat landscape.</p>
+
+  <p>Unlike traditional security taxonomies, InjectLab centers on the nuances of instruction-following models, emergent behavior from chained agents, and bypass strategies that exploit encoding, role confusion, and token leakage. These threat techniques have implications for data poisoning, prompt hijacking, reflection-based attacks, and AI-to-AI miscommunication — especially in open-ended applications like autonomous agents, copilots, and chatbots. By organizing these behaviors into a visual, explorable matrix, InjectLab aims to accelerate community awareness and defensive engineering in the LLMOps and AI red teaming space.</p>
+
+  <p>This project was developed independently to foster collaboration across AI security research, red teaming, and governance communities. All descriptions are curated from public incidents, research papers, threat demos, and ongoing discourse within responsible disclosure ecosystems. The site is fully static, openly hosted, and versionable — ensuring transparency and adaptability as new LLM abuse patterns emerge. Feedback, community PRs, and new tactic submissions are welcome via <a href="https://github.com/ahow2004/injectlab" target="_blank">GitHub</a>.</p>
+</section>
     <script>
   const data = [
     {
